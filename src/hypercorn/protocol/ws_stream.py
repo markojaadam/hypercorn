@@ -1,3 +1,4 @@
+import asyncio
 from enum import auto, Enum
 from time import time
 from typing import Awaitable, Callable, List, Optional, Tuple, Union
@@ -204,6 +205,8 @@ class WSStream:
                 )
                 await self.app_put({"type": "websocket.connect"})
         elif isinstance(event, (Body, Data)):
+            while not hasattr(self, 'connection'):
+                await asyncio.sleep(0)
             self.connection.receive_data(event.data)
             await self._handle_events()
         elif isinstance(event, StreamClosed):
